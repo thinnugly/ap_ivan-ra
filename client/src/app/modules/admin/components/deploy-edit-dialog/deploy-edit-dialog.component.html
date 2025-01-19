@@ -1,0 +1,23 @@
+<div class="container">
+  <form [formGroup]="activityForm" (ngSubmit)="submit()" class="custom-card">
+    <mat-form-field appearance="outline">
+      <mat-label>Avaliate The Student</mat-label>
+      <input matInput type="number" placeholder="Enter the grade" formControlName="nota">
+      <mat-error *ngIf="activityForm.controls['nota'].hasError('required') && activityForm.controls['nota'].touched">
+        The grade is mandatory.
+      </mat-error>
+      <mat-error *ngIf="activityForm.controls['nota'].hasError('minlength') && activityForm.controls['nota'].touched">
+        Please enter a valid nota. The nota must contain at least 6 characters.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- <mat-form-field appearance="outline">
+      <mat-label>Activity assigned by</mat-label>
+      <input matInput type="text" formControlName="id" readonly>
+    </mat-form-field> -->
+
+    <button mat-raised-button color="accent" type="submit" [disabled]="activityForm.invalid">
+      Deploy activity
+    </button>
+  </form>
+</div>

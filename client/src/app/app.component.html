@@ -1,0 +1,10 @@
+<div *ngIf="!isAdminLoggedIn && !isEmployeeLoggedIn">
+  <mat-toolbar class="visitor-toolbar">
+    <span class="spacer"></span>
+    <div class="auth-buttons">
+      <button mat-button routerLink="/auth/signup" routerLinkActive="active" aria-label="Register">Register</button>
+      <button mat-button routerLink="/auth/login" routerLinkActive="active" aria-label="Login">Login</button>
+    </div>
+  </mat-toolbar>
+</div>
+<router-outlet></router-outlet>

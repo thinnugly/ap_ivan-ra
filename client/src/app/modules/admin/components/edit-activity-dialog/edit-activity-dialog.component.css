@@ -1,0 +1,23 @@
+form {
+  width: 100%;
+}
+
+.comps {
+  width: 90%;
+  margin-bottom: 10px;
+  flex-direction: column;
+  margin-top: 60px;
+
+}
+
+h5 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.custom-card {
+  width: 100%;
+  margin-top: 5px;
+}

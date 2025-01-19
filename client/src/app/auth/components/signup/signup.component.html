@@ -1,0 +1,57 @@
+<div class="container">
+    <mat-card class="custom-card">
+        <mat-card-title class="custom-title">
+          <h6>AP - Ivan!ra</h6>
+          <h6><strong>Register with your personal details</strong></h6>
+          <p>Do you a member? <a class="link-info" (click)="loginForm()">Sign in here</a></p>
+        </mat-card-title>
+        <mat-card-content>
+            <form [formGroup]="signupForm" (ngSubmit)="onSubmitSignupForm()">
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Enter your name. e.g: Renato Madeia Muiambo" formControlName="username" required>
+                   <mat-error *ngIf="signupForm.controls['username'].hasError('invalidName') && signupForm.controls['username'].touched">
+                      Please enter a valid name. The name can't contain numbers or special characters.
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Email address</mat-label>
+                  <input matInput placeholder="Enter your email address. e.g: renatomuiambo24@gmail.com" formControlName="email">
+                  <mat-error *ngIf="signupForm.controls['email'].hasError('required') && signupForm.controls['email'].touched">
+                    The email address is mandatory.
+                  </mat-error>
+                  <mat-error *ngIf="signupForm.controls['email'].hasError('email') && signupForm.controls['email'].touched">
+                    Please enter a valid email address.
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Password</mat-label>
+                  <input matInput type="password" placeholder="Enter your password" formControlName="password" required>
+                  <mat-error *ngIf="signupForm.controls['password'].hasError('required') && signupForm.controls['password'].touched">
+                    The password is mandatory.
+                  </mat-error>
+                  <mat-error *ngIf="signupForm.controls['password'].hasError('minlength') && signupForm.controls['password'].touched">
+                    Please enter a valid password. The password must contain at least 6 characters.
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline" *ngIf="isAdmin">
+                  <mat-label>Select the priority</mat-label>
+                  <mat-select formControlName="userRole" name="userRole">
+                      <mat-option *ngFor="let userRole of listOfUserRole" [value]="userRole">
+                         {{userRole}}
+                      </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="signupForm.controls['userRole'].hasError('required') && signupForm.controls['userRole'].touched">
+                    The user role is mandatory.
+                  </mat-error>
+              </mat-form-field>
+                <button mat-raised-button color="accent" [disabled]="signupForm.invalid" type="submit">
+                  Sign Up
+                </button>
+              </form>
+        </mat-card-content>
+    </mat-card>
+</div>
+

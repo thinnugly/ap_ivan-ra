@@ -1,0 +1,83 @@
+*{
+  font-family: "Montserrat", sans-serif;
+}
+
+mat-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: whitesmoke;
+    position: fixed;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .app-name {
+    font-weight: bold;
+  }
+
+  /* Barra de ferramentas */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+
+/* Espaçamento entre os elementos */
+.spacer {
+  flex: 1;
+}
+
+/* Botões ativos */
+button.active {
+  font-weight: bold;
+  border-bottom: 2px solid white;
+}
+
+.visitor-toolbar {
+  background-color: #ffffff; /* Fundo branco */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra leve */
+  border-bottom: 2px solid #ddd; /* Borda inferior */
+  color: #333; /* Cor do texto */
+  padding: 0 20px; /* Espaçamento interno */
+}
+
+.visitor-toolbar .app-name {
+  font-size: 18px; /* Tamanho da fonte do nome do app */
+  font-weight: bold; /* Texto em negrito */
+}
+
+.visitor-toolbar .spacer {
+  flex: 1; /* Ocupa o espaço disponível para empurrar os botões para a direita */
+}
+
+.visitor-toolbar button {
+  color: #007bff; /* Cor dos botões */
+  font-weight: bold; /* Negrito nos botões */
+}
+
+.visitor-toolbar button:hover {
+  background-color: rgba(0, 123, 255, 0.1); /* Fundo ao passar o mouse */
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px; /* Espaçamento entre os botões */
+  padding: 10px 0; /* Espaçamento interno */
+}
+
+.auth-buttons button {
+  border-radius: 4px; /* Bordas arredondadas */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra nos botões */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animação */
+}
+
+.auth-buttons button:hover {
+  transform: translateY(-2px); /* Elevação ao passar o mouse */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Sombra mais intensa */
+}
+

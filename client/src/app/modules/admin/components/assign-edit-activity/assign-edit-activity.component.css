@@ -1,0 +1,44 @@
+*{
+  font-family: "Montserrat", sans-serif;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.custom-card {
+  width: 80%;
+}
+
+.custom-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+}
+h6 {
+  font-size: 20px;
+}
+a {
+  cursor: pointer;
+
+}
+
+a:hover{
+  cursor: pointer;
+  text-decoration: wavy;
+
+}

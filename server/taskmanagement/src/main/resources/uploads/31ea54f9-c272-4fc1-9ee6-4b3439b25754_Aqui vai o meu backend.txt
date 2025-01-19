@@ -1,0 +1,57 @@
+Aqui vai o meu backend em Spring boot, quero um frontend em Angular para fazer POST de uma Ativity:
+ActivityConfigurationDTO createActivityConfiguration(String technicalDescription,
+                                                         MultipartFile activityInstructions,
+                                                         MultipartFile supportMaterial);
+                                                         
+@Override
+    public ActivityConfigurationDTO createActivityConfiguration(String technicalDescription,
+                                                                MultipartFile activityInstructions,
+                                                                MultipartFile supportMaterial) {
+
+        try {
+            String activityInstructionsPath = saveFile(activityInstructions);
+            String supportMaterialPath = saveFile(supportMaterial);
+
+            ActivityConfiguration activityConfiguration = new ActivityConfiguration();
+            activityConfiguration.setTechnicalDescription(technicalDescription);
+            activityConfiguration.setActivityInstructions(activityInstructionsPath);
+            activityConfiguration.setSupportMaterial(supportMaterialPath);
+            activityConfiguration.setCreatedAt(LocalDateTime.now());
+            activityConfiguration.setUpdatedAt(LocalDateTime.now());
+
+            activityConfiguration = activityConfigurationRepository.save(activityConfiguration);
+
+            return activityConfiguration.getActivityConfigurationDTO();
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao salvar arquivos: " + e.getMessage(), e);
+        }
+    }
+
+    private String saveFile(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IOException("Arquivo vazio");
+        }
+
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        File directory = new File(UPLOAD_DIR);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        Path path = Paths.get(UPLOAD_DIR + fileName);
+        Files.write(path, file.getBytes());
+
+        return "/uploads/" + fileName;
+    }
+    
+@PostMapping("/configuracao")
+    public ResponseEntity<ActivityConfigurationDTO> createActivityConfiguration(
+            @RequestParam("technicalDescription") String technicalDescription,
+            @RequestParam("activityInstructions") MultipartFile activityInstructions,
+            @RequestParam("supportMaterial") MultipartFile supportMaterial) {
+
+        ActivityConfigurationDTO savedDTO = adminService.createActivityConfiguration(
+                technicalDescription, activityInstructions, supportMaterial);
+
+        return new ResponseEntity<>(savedDTO, HttpStatus.CREATED);
+    }

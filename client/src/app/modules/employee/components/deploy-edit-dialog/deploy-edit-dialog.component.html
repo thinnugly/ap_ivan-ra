@@ -1,0 +1,41 @@
+<div class="container">
+  <form [formGroup]="activityForm" (click)="submit()" style="width: 100%;">
+    <div class="comps d-flex flex-column align-items-center justify-content-center" style="width: 100%;">
+      <div class="mb-3 w-75">
+        <!-- <label for="id">Deploy Activity Id:</label> -->
+        <input type="hidden" readonly class="form-control" id="id" formControlName="id" />
+      </div>
+      <div class="mb-3 w-75">
+        <label for="technicalDescription">Technical Discription</label>
+        <input type="text" readonly class="form-control" id="technicalDescription" formControlName="technicalDescription" />
+      </div>
+      <div class="mb-3 w-75">
+        <label for="operationUserEmail">Activity assigned By</label>
+        <input type="text" readonly class="form-control" id="operationUserEmail" formControlName="operationUserEmail" />
+      </div>
+      <div class="mb-3 w-75">
+        <!-- <label for="userId">Student Id:</label> -->
+        <input type="hidden" readonly class="form-control" id="userId" formControlName="userId" />
+      </div>
+      <div class="mb-3 w-75">
+        <label for="userName">Activity Deployed by:</label>
+        <input type="text" readonly class="form-control" id="userName" formControlName="userName"/>
+      </div>
+
+      <div class="mb-3 w-75">
+        <label for="activityDeployed">Selecty your activity to deploy (PDF, TXT, DOC):</label>
+        <input type="file" id="activityDeployed" class="form-control" (change)="onFileChange($event, 'activityDeployed')" />
+        <div
+          *ngIf="activityForm.get('activityDeployed')?.invalid && (activityForm.get('activityDeployed')?.touched || activityForm.get('activityDeployed')?.dirty)">
+          <small *ngIf="activityForm.get('activityDeployed')?.errors?.['required']">Support material is required.</small>
+        </div>
+      </div>
+
+
+      <div class="d-flex justify-content-center w-75 mt-4">
+        <button type="button" mat-raised-button (click)="close()" style="margin-top: 10px; margin-right: 10px;">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [disabled]="activityForm.invalid" style="margin-top: 10px;">Deploy activity</button>
+      </div>
+    </div>
+  </form>
+</div>

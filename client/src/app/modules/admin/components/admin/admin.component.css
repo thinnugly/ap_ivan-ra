@@ -1,0 +1,24 @@
+.user-panel .info a {
+  max-width: 100%;          /* Garante que o link ocupe apenas o espaço disponível */
+  white-space: nowrap;      /* Impede que o texto quebre em várias linhas */
+  overflow: hidden;         /* Esconde o texto que ultrapassa o limite */
+  text-overflow: ellipsis;  /* Adiciona '...' quando o texto é muito longo */
+  display: block;           /* Garante que o link se comporte como um bloco */
+}
+
+/* Inicialmente, o submenu está oculto */
+.nav-treeview {
+  display: none;
+  transition: all 0.3s ease; /* Animação suave para expandir e contrair */
+}
+
+/* Quando o submenu está expandido, ele é mostrado */
+.nav-treeview.show {
+  display: block;
+}
+
+/* Rotação do ícone de seta quando o menu está expandido */
+.rotate {
+  transform: rotate(90deg);
+  transition: transform 0.3s ease;
+}

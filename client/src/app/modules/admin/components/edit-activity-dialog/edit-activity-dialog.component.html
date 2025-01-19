@@ -1,0 +1,69 @@
+<div class="container">
+  <form [formGroup]="activityForm" (ngSubmit)="submit()" style="width: 100%;">
+    <div class="comps d-flex flex-column align-items-center justify-content-center" style="width: 100%;">
+      <div class="mb-3 w-75">
+        <input type="hidden" readonly class="form-control" id="activityId" formControlName="activityId" />
+      </div>
+
+      <div class="mb-3 w-75">
+        <label for="technicalDescription" class="form-label">Technical Description:</label>
+        <textarea
+          id="technicalDescription"
+          class="form-control"
+          formControlName="technicalDescription"
+          [ngClass]="{
+            'is-invalid': activityForm.get('technicalDescription')?.invalid &&
+              activityForm.get('technicalDescription')?.touched
+          }"
+          placeholder="Enter the technical description of the activity"
+          rows="5"
+        ></textarea>
+        <div
+          *ngIf="activityForm.get('technicalDescription')?.invalid &&
+            activityForm.get('technicalDescription')?.touched"
+          class="invalid-feedback"
+        >
+          <div *ngIf="activityForm.get('technicalDescription')?.errors?.['required']">
+            Technical description is required.
+          </div>
+          <div *ngIf="activityForm.get('technicalDescription')?.errors?.['minlength']">
+            Technical description must be at least 10 characters long.
+          </div>
+          <div *ngIf="activityForm.get('technicalDescription')?.errors?.['maxlength']">
+            Technical description cannot exceed 2000 characters.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3 w-75">
+        <label for="activityInstructions">Activity Instructions (PDF, TXT, DOC):</label>
+        <input type="file" class="form-control" id="activityInstructions" (change)="onFileChange($event, 'activityInstructions')" />
+        <div
+          *ngIf="activityForm.get('activityInstructions')?.invalid && (activityForm.get('activityInstructions')?.touched || activityForm.get('activityInstructions')?.dirty)">
+          <small *ngIf="activityForm.get('activityInstructions')?.errors?.['required']">Activity instructions are required.</small>
+        </div>
+      </div>
+
+      <div class="mb-3 w-75">
+        <label for="supportMaterial">Support Material (PDF, TXT, DOC):</label>
+        <input type="file" id="supportMaterial" class="form-control" (change)="onFileChange($event, 'supportMaterial')" />
+        <div
+          *ngIf="activityForm.get('supportMaterial')?.invalid && (activityForm.get('supportMaterial')?.touched || activityForm.get('supportMaterial')?.dirty)">
+          <small *ngIf="activityForm.get('supportMaterial')?.errors?.['required']">Support material is required.</small>
+        </div>
+      </div>
+
+      <div class="w-75">
+        <mat-form-field appearance="outline" class="custom-card">
+          <mat-label>Activity configuration created by</mat-label>
+          <input matInput type="text" formControlName="createdByView" readonly>
+        </mat-form-field>
+      </div>
+
+      <div class="d-flex justify-content-center w-75">
+        <button type="button" mat-raised-button (click)="close()" style="margin-top: 10px; margin-right: 10px;">Cancel</button>
+        <button mat-raised-button color="accent" type="submit" [disabled]="activityForm.invalid" style="margin-top: 10px;">Save activity</button>
+      </div>
+    </div>
+  </form>
+</div>

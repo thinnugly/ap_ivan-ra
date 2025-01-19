@@ -1,0 +1,100 @@
+<form [formGroup]="activityConfigurationForm" (ngSubmit)="onSubmit()">
+  <div class="container d-flex flex-column align-items-center justify-content-center">
+    <!-- Título do Formulário -->
+    <h2 class="form-title text-center mb-4">Configure Your Activity</h2>
+
+    <!-- Campo: Technical Description -->
+    <div class="mb-3 w-75">
+      <label for="technicalDescription" class="form-label">Technical Description:</label>
+      <textarea
+        id="technicalDescription"
+        class="form-control"
+        formControlName="technicalDescription"
+        [ngClass]="{
+          'is-invalid': activityConfigurationForm.get('technicalDescription')?.invalid &&
+            activityConfigurationForm.get('technicalDescription')?.touched
+        }"
+        placeholder="Enter the technical description of the activity"
+        rows="5"
+      ></textarea>
+      <div
+        *ngIf="activityConfigurationForm.get('technicalDescription')?.invalid &&
+          activityConfigurationForm.get('technicalDescription')?.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="activityConfigurationForm.get('technicalDescription')?.errors?.['required']">
+          Technical description is required.
+        </div>
+        <div *ngIf="activityConfigurationForm.get('technicalDescription')?.errors?.['minlength']">
+          Technical description must be at least 10 characters long.
+        </div>
+        <div *ngIf="activityConfigurationForm.get('technicalDescription')?.errors?.['maxlength']">
+          Technical description cannot exceed 2000 characters.
+        </div>
+      </div>
+    </div>
+
+    <!-- Campo: Activity Instructions -->
+    <div class="mb-3 w-75">
+      <label for="activityInstructions" class="form-label">Activity Instructions (PDF, TXT, DOC):</label>
+      <input
+        type="file"
+        id="activityInstructions"
+        class="form-control"
+        formControlName="activityInstructions"
+        (change)="onFileSelected($event, 'activityInstructions')"
+        [ngClass]="{
+          'is-invalid': activityConfigurationForm.get('activityInstructions')?.invalid &&
+            activityConfigurationForm.get('activityInstructions')?.touched
+        }"
+      />
+      <div
+        *ngIf="activityConfigurationForm.get('activityInstructions')?.invalid &&
+          activityConfigurationForm.get('activityInstructions')?.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="activityConfigurationForm.get('activityInstructions')?.errors?.['required']">
+          Activity instructions are required.
+        </div>
+        <div *ngIf="activityConfigurationForm.get('activityInstructions')?.errors?.['invalidFileType']">
+          Invalid file type. Only PDF, TXT, DOC, or DOCX allowed.
+        </div>
+      </div>
+    </div>
+
+    <!-- Campo: Support Material -->
+    <div class="mb-3 w-75">
+      <label for="supportMaterial" class="form-label">Support Material (PDF, TXT, DOC):</label>
+      <input
+        type="file"
+        id="supportMaterial"
+        class="form-control"
+        formControlName="supportMaterial"
+        (change)="onFileSelected($event, 'supportMaterial')"
+        [ngClass]="{
+          'is-invalid': activityConfigurationForm.get('supportMaterial')?.invalid &&
+            activityConfigurationForm.get('supportMaterial')?.touched
+        }"
+      />
+      <div
+        *ngIf="activityConfigurationForm.get('supportMaterial')?.invalid &&
+          activityConfigurationForm.get('supportMaterial')?.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="activityConfigurationForm.get('supportMaterial')?.errors?.['required']">
+          Support material is required.
+        </div>
+        <div *ngIf="activityConfigurationForm.get('supportMaterial')?.errors?.['invalidFileType']">
+          Invalid file type. Only PDF, TXT, DOC, or DOCX allowed.
+        </div>
+      </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="d-flex justify-content-center w-75 mt-4">
+      <button type="button" class="btn btn-secondary me-2" (click)="close()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="activityConfigurationForm.invalid">Save</button>
+    </div>
+  </div>
+</form>
+

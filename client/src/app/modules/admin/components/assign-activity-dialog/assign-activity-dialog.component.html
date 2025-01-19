@@ -1,0 +1,48 @@
+<div class="container">
+    <form [formGroup]="assignActivityForm" (ngSubmit)="submit()" class="custom-card">
+      <mat-form-field appearance="outline">
+        <mat-label>Select the activity</mat-label>
+        <mat-select formControlName="activityConfigurationId" name="activityConfigurationId">
+          <mat-option *ngFor="let activities of listOfActivities" [value]="activities.id">
+            {{ activities.technicalDescription }}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          The activity is mandatory.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Select the student</mat-label>
+        <mat-select formControlName="userId" name="userId">
+          <mat-option *ngFor="let users of listOfStudents" [value]="users.id">
+            {{ users.username }}
+          </mat-option>
+        </mat-select>
+        <mat-error>
+          The student is mandatory.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="dueDatePicker" placeholder="Choose a due date" formControlName="dueDate" readonly>
+        <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #dueDatePicker></mat-datepicker>
+        <mat-error>
+          The due date is mandatory.
+        </mat-error>
+      </mat-form-field>
+
+      <input type="hidden" readonly class="form-control" id="createdById" formControlName="operationUserId" />
+
+      <mat-form-field appearance="outline">
+        <mat-label>Activity assigned by</mat-label>
+        <input matInput type="text" formControlName="createdByView" readonly>
+      </mat-form-field>
+
+      <button mat-raised-button color="accent" type="submit" [disabled]="assignActivityForm.invalid">
+        Assign activity
+      </button>
+    </form>
+</div>
