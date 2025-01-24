@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { StorageService } from '../../../../auth/services/storage/storage.service';
 import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+import { NotificationService } from '../../../../services/notification/notification.service';
+import { Notification } from '../../../../models/notification.models';
+import { formatDistanceToNow } from 'date-fns';
 
 @Component({
   selector: 'app-admin',
@@ -15,7 +19,16 @@ export class AdminComponent {
   isLoading: boolean = true;
   isExpanded: boolean = false;
 
-  constructor(private router: Router) {}
+  notifications: Notification[] = [];
+  notificationCount: number = 0;
+  userId: any = StorageService.getUser();
+  selectedNotification: Notification | null = null;
+  isPanelOpen: boolean = false;
+  notificationControl = new FormControl('');
+
+  showAllNotifications: boolean = false;
+
+  constructor(private router: Router, private notificationService: NotificationService) { }
 
   toggleSubMenu() {
     this.isExpanded = !this.isExpanded;
@@ -25,11 +38,56 @@ export class AdminComponent {
     this.user = StorageService.getUser();
     this.token = StorageService.getToken();
     this.role = StorageService.getUserRole();
+    this.loadNotifications();
 
+  }
+
+  loadNotifications() {
+    this.notificationService.getUnreadNotifications().subscribe(res => {
+      this.notifications = res;
+      this.notificationCount = res.length;
+    });
+  }
+
+  openNotificationPanel(notification: Notification, event: Event): void {
+    event.preventDefault();
+
+    if (!notification.read) {
+      this.notificationService.markAsReadAdmin(notification.id).subscribe(() => {
+        notification.read = true;
+        this.notificationCount--;
+        this.loadNotifications();
+      });
+    }
+    this.selectedNotification = notification;
+    this.isPanelOpen = true;
+    this.notificationControl.setValue(this.selectedNotification.message);
+  }
+
+  closeNotificationPanel(): void {
+    this.selectedNotification = null;
+    this.isPanelOpen = false;
+  }
+
+  formatTime(date: Date): string {
+    return formatDistanceToNow(date, { addSuffix: true });
   }
 
   logout(): void {
     StorageService.logout();
     this.router.navigateByUrl('auth/login');
+  }
+
+  viewAllNotifications(event: Event) {
+    event.preventDefault();
+    this.showAllNotifications = true;
+    this.loadNotifications();
+  }
+
+  getNotifications() {
+    if (this.showAllNotifications) {
+      return this.notifications;  // Retorna todas as notificações
+    }
+    return this.notifications.slice(0, 2);  // Retorna apenas as duas primeiras notificações
   }
 }

@@ -1,6 +1,7 @@
 package com.devwn.taskmanagement.controllers.student;
 
 import com.devwn.taskmanagement.dto.DeployActivityDTO;
+import com.devwn.taskmanagement.dto.NotificationDTO;
 import com.devwn.taskmanagement.dto.UserActivityDTO;
 import com.devwn.taskmanagement.services.student.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class StudentController {
     }
 
     @GetMapping("/assignactivities")
-    public ResponseEntity<List<UserActivityDTO>> getUserActitityByUserId() {
+    public ResponseEntity<List<UserActivityDTO>> getUserActivityByUserId() {
         return ResponseEntity.ok(studentService.getUserActitityByUserId());
     }
 
@@ -55,5 +56,16 @@ public class StudentController {
     ){
         DeployActivityDTO deployActivityDTO = studentService.updateDeployActivity(id, activityDeployed);
         return new ResponseEntity<>(deployActivityDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<List<NotificationDTO>> getUnreadNotifications() {
+        return ResponseEntity.ok(studentService.getUnreadNotifications());
+    }
+
+    @PutMapping("/notifications/{id}")
+    public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
+        studentService.markAsRead(id);
+        return ResponseEntity.ok().build();
     }
 }

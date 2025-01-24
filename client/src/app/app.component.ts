@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { StorageService } from './auth/services/storage/storage.service';
 import { Router, Event, NavigationEnd } from '@angular/router';
 import { TimeoutService } from './auth/services/timeout/timeout.service';
@@ -8,7 +8,7 @@ import { TimeoutService } from './auth/services/timeout/timeout.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements  OnInit, OnDestroy  {
 
   isAdminLoggedIn: boolean = false;
   isEmployeeLoggedIn: boolean = false;
@@ -24,10 +24,12 @@ export class AppComponent implements OnInit {
       }
     });
     this.timeoutService.startMonitoring();
+    //window.addEventListener('beforeunload', this.handleBeforeUnload);
   }
 
   ngOnDestroy() {
     this.timeoutService.stopMonitoring();
+    //window.removeEventListener('beforeunload', this.handleBeforeUnload);
   }
 
   private updateLoginStatus(): void {
@@ -40,24 +42,8 @@ export class AppComponent implements OnInit {
     this.router.navigateByUrl('auth/login');
   }
 
-  // Define os métodos chamados no template
-  getToolbarColor(): string {
-    if (this.isAdminLoggedIn) {
-      return 'warn'; // Cor para o admin
-    } else if (this.isEmployeeLoggedIn) {
-      return 'accent'; // Cor para o funcionário
-    } else {
-      return 'primary'; // Cor padrão
-    }
-  }
 
-  getAppName(): string {
-    if (this.isAdminLoggedIn) {
-      return 'Admin Dashboard';
-    } else if (this.isEmployeeLoggedIn) {
-      return 'Employee Dashboard';
-    } else {
-      return 'devWN - Task Management System';
-    }
+  handleBeforeUnload(event: BeforeUnloadEvent): void {
+    StorageService.logout();
   }
 }

@@ -1,21 +1,12 @@
 package com.devwn.taskmanagement.services.admin;
 
-import com.devwn.taskmanagement.dto.ActivityConfigurationDTO;
-import com.devwn.taskmanagement.dto.DeployActivityDTO;
-import com.devwn.taskmanagement.dto.UserActivityDTO;
-import com.devwn.taskmanagement.dto.UserDTO;
-import com.devwn.taskmanagement.entities.ActivityConfiguration;
-import com.devwn.taskmanagement.entities.DeployActivity;
-import com.devwn.taskmanagement.entities.User;
-import com.devwn.taskmanagement.entities.UserActivity;
+import com.devwn.taskmanagement.dto.*;
+import com.devwn.taskmanagement.entities.*;
 import com.devwn.taskmanagement.enums.ActivityStatus;
 import com.devwn.taskmanagement.enums.UserRole;
 import com.devwn.taskmanagement.infra.security.JWToken;
-import com.devwn.taskmanagement.repositories.ActivityConfigurationRepository;
-import com.devwn.taskmanagement.repositories.DeployActivityRepository;
-import com.devwn.taskmanagement.repositories.UserActivityRepository;
-import com.devwn.taskmanagement.repositories.UserRepository;
-import com.devwn.taskmanagement.services.notification.NotificationService;
+import com.devwn.taskmanagement.repositories.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -43,7 +34,7 @@ public class AdminServiceImp implements AdminService {
     private final UserActivityRepository userActivityRepository;
     private final JWToken jwToken;
     private final DeployActivityRepository deployActivityRepository;
-    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     private String getLoggedUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -169,8 +160,12 @@ public class AdminServiceImp implements AdminService {
                 userActivity.setOperationUser(loggedUser.get());
                 userActivity.setCreatedAt(LocalDateTime.now());
 
+                NotificationDTO notificationDTO = new NotificationDTO();
+                notificationDTO.setUserId(user.get().getId());
+                notificationDTO.setMessage("You have been assigned a new activity: " + activityConfigurationOptional.get().getTechnicalDescription());
+                createNotification(notificationDTO);
+
                 UserActivityDTO dto = userActivityRepository.save(userActivity).getUserActivityDTO();
-                notificationService.sendNotificationToUser(user.get(), "A new activity was attached to you!");
                 return dto;
 
 
@@ -201,11 +196,15 @@ public class AdminServiceImp implements AdminService {
                     } else {
                         userActivity.setActivityStatus(ActivityStatus.INPROGRESS);
                     }
-//                    userActivity.setActivityStatus(ActivityStatus.INPROGRESS);
                     userActivity.setOperationUser(loggedUser.get());
                     userActivity.setUpdatedAt(LocalDateTime.now());
+
+                    NotificationDTO notificationDTO = new NotificationDTO();
+                    notificationDTO.setUserId(user.get().getId());
+                    notificationDTO.setMessage("The activity assigned to you was updated: " + activityConfigurationOptional.get().getTechnicalDescription());
+                    createNotification(notificationDTO);
+
                     UserActivityDTO dto = userActivityRepository.save(userActivity).getUserActivityDTO();
-                    notificationService.sendNotificationToUser(user.get(), "The activity attached to you was updated!");
                     return dto;
                 }
             }
@@ -215,6 +214,14 @@ public class AdminServiceImp implements AdminService {
 
     @Override
     public void deleteAssignActivity(Long id) {
+        Long userId = userRepository.findUserIdByUserActivityId(id);
+        Optional<UserActivity> userActivityOptional = userActivityRepository.findById(id);
+        if(userId.describeConstable().isPresent() && userActivityOptional.isPresent()) {
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setUserId(userId);
+            notificationDTO.setMessage("The activity assigned to you was deleted:" +userActivityOptional.get().getActivityConfiguration().getTechnicalDescription());
+            createNotification(notificationDTO);
+        }
         userActivityRepository.deleteById(id);
     }
 
@@ -288,6 +295,12 @@ public class AdminServiceImp implements AdminService {
             deployActivity.setSituation();
             deployActivity.setAvaliatedAt(LocalDateTime.now());
             deployActivity.setUpdatedAt(LocalDateTime.now());
+
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setUserId(deployActivity.getUser().getId());
+            notificationDTO.setMessage("Your deploy activity was avaliated: " +deployActivityOptional.get().getUserActivity().getActivityConfiguration().getTechnicalDescription()+". Grade: "+deployActivityOptional.get().getNota()+".");
+            createNotification(notificationDTO);
+
             return deployActivityRepository.save(deployActivity).getDeployActivityDTO();
         }
         return null;
@@ -307,6 +320,48 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
+    public NotificationDTO createNotification(NotificationDTO notificationDTO) {
+        Optional<User> userOptional = userRepository.findById(notificationDTO.getUserId());
+        if(userOptional.isPresent()) {
+            Notification notification = new Notification();
+            notification.setUser(userOptional.get());
+            notification.setMessage(notificationDTO.getMessage());
+            notification.setCreatedAt(LocalDateTime.now());
+            return notificationRepository.save(notification).getNotificationDTO();
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public void deleteByReadTrue() {
+        notificationRepository.deleteByReadTrue();
+    }
+
+    @Override
+    public List<NotificationDTO> getUnreadNotifications() {
+        User loggedInUser = jwToken.getLoggedInUser();
+        if (loggedInUser != null) {
+            List<Notification> notifications = notificationRepository.findByUserIdAndReadFalse(loggedInUser.getId());
+            return notifications.stream()
+                    .map(Notification::getNotificationDTO)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    @Override
+    public void markAsRead(Long id) {
+        User loggedInUser = jwToken.getLoggedInUser();
+        if (loggedInUser != null) {
+            Notification notification = notificationRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
+            notification.setRead(true);
+            notificationRepository.save(notification);
+        }
+    }
+
+    @Override
     public long countActivitiesConfigurations() {
         User user = jwToken.getLoggedInUser();
         if (user != null) {
@@ -314,6 +369,7 @@ public class AdminServiceImp implements AdminService {
         }
         return 0;
     }
+
 
 }
 

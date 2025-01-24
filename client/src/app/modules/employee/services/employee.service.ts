@@ -33,7 +33,6 @@ export class EmployeeService {
     });
   }
 
-
   getCountActivitiesConfigurations(): Observable<number> {
     return this.http.get<number>("api/employee/countactivitiesconfigurations", {
       headers: this.createAuthorizationHeader()

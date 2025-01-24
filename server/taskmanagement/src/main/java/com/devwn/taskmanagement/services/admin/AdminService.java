@@ -1,10 +1,7 @@
 package com.devwn.taskmanagement.services.admin;
 
-import com.devwn.taskmanagement.dto.ActivityConfigurationDTO;
-import com.devwn.taskmanagement.dto.DeployActivityDTO;
-import com.devwn.taskmanagement.dto.UserActivityDTO;
-import com.devwn.taskmanagement.dto.UserDTO;
-import com.devwn.taskmanagement.entities.UserActivity;
+import com.devwn.taskmanagement.dto.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,5 +29,8 @@ public interface AdminService {
     void deleteDeployActivity(Long id);
     DeployActivityDTO updateDeployActivity (Long id, double nota);
     void cancelLateActivities();
-
+    NotificationDTO createNotification(NotificationDTO notificationDTO);
+    void deleteByReadTrue();
+    List<NotificationDTO> getUnreadNotifications();
+    void markAsRead(Long id);
 }

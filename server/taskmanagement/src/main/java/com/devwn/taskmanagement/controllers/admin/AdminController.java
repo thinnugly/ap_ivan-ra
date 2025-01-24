@@ -2,7 +2,9 @@ package com.devwn.taskmanagement.controllers.admin;
 
 import com.devwn.taskmanagement.dto.ActivityConfigurationDTO;
 import com.devwn.taskmanagement.dto.DeployActivityDTO;
+import com.devwn.taskmanagement.dto.NotificationDTO;
 import com.devwn.taskmanagement.dto.UserActivityDTO;
+import com.devwn.taskmanagement.entities.Notification;
 import com.devwn.taskmanagement.entities.UserActivity;
 import com.devwn.taskmanagement.repositories.UserRepository;
 import com.devwn.taskmanagement.services.admin.AdminService;
@@ -126,5 +128,16 @@ public class AdminController {
     ){
         DeployActivityDTO deployActivityDTO = adminService.updateDeployActivity(id, nota);
         return new ResponseEntity<>(deployActivityDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<List<NotificationDTO>> getUnreadNotifications() {
+        return ResponseEntity.ok(adminService.getUnreadNotifications());
+    }
+
+    @PutMapping("/notifications/{id}")
+    public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
+        adminService.markAsRead(id);
+        return ResponseEntity.ok().build();
     }
 }

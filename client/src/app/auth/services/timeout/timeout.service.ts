@@ -7,7 +7,7 @@ import { StorageService } from '../storage/storage.service';
 })
 export class TimeoutService {
   private timeoutId: any;
-  private readonly timeoutDuration = 15 * 60 * 1000; // 15 minutos
+  private readonly timeoutDuration = 5 * 60 * 1000; // 15 minutos
 
   constructor(private router: Router, private ngZone: NgZone) {}
 

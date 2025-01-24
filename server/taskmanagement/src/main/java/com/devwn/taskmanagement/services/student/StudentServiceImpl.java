@@ -2,17 +2,13 @@ package com.devwn.taskmanagement.services.student;
 
 import com.devwn.taskmanagement.dto.ActivityConfigurationDTO;
 import com.devwn.taskmanagement.dto.DeployActivityDTO;
+import com.devwn.taskmanagement.dto.NotificationDTO;
 import com.devwn.taskmanagement.dto.UserActivityDTO;
-import com.devwn.taskmanagement.entities.ActivityConfiguration;
-import com.devwn.taskmanagement.entities.DeployActivity;
-import com.devwn.taskmanagement.entities.User;
-import com.devwn.taskmanagement.entities.UserActivity;
+import com.devwn.taskmanagement.entities.*;
 import com.devwn.taskmanagement.enums.ActivityStatus;
 import com.devwn.taskmanagement.infra.security.JWToken;
-import com.devwn.taskmanagement.repositories.ActivityConfigurationRepository;
-import com.devwn.taskmanagement.repositories.DeployActivityRepository;
-import com.devwn.taskmanagement.repositories.UserActivityRepository;
-import com.devwn.taskmanagement.repositories.UserRepository;
+import com.devwn.taskmanagement.repositories.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,6 +36,7 @@ public class StudentServiceImpl implements StudentService {
     private final UserActivityRepository userActivityRepository;
     private final JWToken jwToken;
     private final DeployActivityRepository deployActivityRepository;
+    private final NotificationRepository notificationRepository;
 
     @Value("${upload.dir}")
     private String UPLOAD_DIR;
@@ -105,6 +102,12 @@ public class StudentServiceImpl implements StudentService {
                 deployActivity.setDoneAt();
                 deployActivity.setActivityDeployed(activityDeployedPath);
                 deployActivity.setEditCount(0);
+
+                NotificationDTO notificationDTO = new NotificationDTO();
+                notificationDTO.setUserId(userActivity.get().getOperationUser().getId());
+                notificationDTO.setMessage(user.get().getEmail()+" deployed his activity: "+userActivity.get().getActivityConfiguration().getTechnicalDescription());
+                createNotification(notificationDTO);
+
                 return deployActivityRepository.save(deployActivity).getDeployActivityDTO();
 
             } catch (IOException e) {
@@ -146,6 +149,12 @@ public class StudentServiceImpl implements StudentService {
                     deployActivity.setActivityDeployed(activityDeployedPath);
                     deployActivity.setUpdatedAt(LocalDateTime.now());
                     deployActivity.setEditCount(deployActivity.getEditCount() + 1);
+
+                    NotificationDTO notificationDTO = new NotificationDTO();
+                    notificationDTO.setUserId(deployActivityOptional.get().getUserActivity().getOperationUser().getId());
+                    notificationDTO.setMessage(deployActivityOptional.get().getUser().getEmail()+" updated his deploy on your activity: "+deployActivityOptional.get().getUserActivity().getActivityConfiguration().getTechnicalDescription());
+                    createNotification(notificationDTO);
+
                     return deployActivityRepository.save(deployActivity).getDeployActivityDTO();
                 }
             } catch (IOException e) {
@@ -154,4 +163,42 @@ public class StudentServiceImpl implements StudentService {
         }
         return null;
     }
+
+    @Override
+    public List<NotificationDTO> getUnreadNotifications() {
+        User loggedInUser = jwToken.getLoggedInUser();
+        if (loggedInUser != null) {
+            List<Notification> notifications = notificationRepository.findByUserIdAndReadFalse(loggedInUser.getId());
+            return notifications.stream()
+                    .map(Notification::getNotificationDTO)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    @Override
+    public void markAsRead(Long id) {
+        User loggedInUser = jwToken.getLoggedInUser();
+        if (loggedInUser != null) {
+            Notification notification = notificationRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Notification not found"));
+            notification.setRead(true);
+            notificationRepository.save(notification);
+        }
+    }
+
+    @Override
+    public NotificationDTO createNotification(NotificationDTO notificationDTO) {
+        Optional<User> userOptional = userRepository.findById(notificationDTO.getUserId());
+        if(userOptional.isPresent()) {
+            Notification notification = new Notification();
+            notification.setUser(userOptional.get());
+            notification.setMessage(notificationDTO.getMessage());
+            notification.setCreatedAt(LocalDateTime.now());
+            return notificationRepository.save(notification).getNotificationDTO();
+        }
+        return null;
+    }
+
+
 }

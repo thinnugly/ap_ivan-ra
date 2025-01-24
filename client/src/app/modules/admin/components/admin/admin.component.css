@@ -22,3 +22,60 @@
   transform: rotate(90deg);
   transition: transform 0.3s ease;
 }
+
+.custom-dropdown {
+  width: 300px; /* Ajuste a largura conforme necessário */
+  max-height: 400px; /* Limitar a altura do dropdown */
+  overflow-y: auto; /* Adicionar rolagem se o conteúdo ultrapassar a altura */
+}
+
+.custom-dropdown .dropdown-item {
+  white-space: nowrap; /* Evitar que o texto quebre em várias linhas */
+  overflow: hidden; /* Ocultar o texto que ultrapassa o contêiner */
+  text-overflow: ellipsis; /* Adicionar reticências para texto longo */
+}
+
+
+/* employee.component.css */
+
+.nav-item {
+  position: relative; /* Para aplicar o z-index corretamente */
+  z-index: 1060; /* Um valor alto para garantir que fique sempre à frente */
+}
+
+.notification-sidenav {
+  position: fixed;
+  top: 0;
+  margin-top: 56px;
+  margin-bottom: 56px;
+  bottom: 0; /* Garante que o painel não ultrapasse o footer */
+  right: -300px; /* Inicialmente fora da tela */
+  width: 300px;
+  height: auto; /* Ajusta a altura automaticamente */
+  background-color: #343a40;
+  box-shadow: -1px 0 5px rgba(0, 0, 0, 0.5), 0 0 0 rgba(0, 0, 0, 0); /* Remove a sombra de cima e de baixo */
+  padding: 20px;
+  transition: right 0.3s ease-in-out;
+  z-index: 1050; /* Certifique-se de que está acima de outros elementos */
+  overflow-y: auto; /* Adiciona rolagem caso o conteúdo ultrapasse a altura da tela */
+}
+
+.notification-sidenav.open {
+  right: 0;
+}
+.notification-sidenav h2 {
+  font-size: 1.5em;
+  color: #fff;
+}
+.notification-sidenav .btn {
+  margin-top: 20px;
+}
+
+.auto-growing-textarea {
+  height: auto;
+  min-height: 50px; /* Define uma altura mínima */
+  max-height: 300px; /* Limita o crescimento máximo */
+  overflow-y: auto; /* Ativa rolagem vertical se necessário */
+}
+
+
